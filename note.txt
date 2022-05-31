@@ -1,0 +1,6 @@
+API Gateway 統合リクエストでは、Lambda プロキシ統合の使用を使うようにする。
+API の設定において、バイナリメディアタイプを追加 image/* 
+
+
+配信対象 vue のビルド時には、vue.config.js に以下を追加
+publicPath: './'

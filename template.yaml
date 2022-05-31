@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: > 
+  SPAP is neither Pen-Pinapple-Apple-Pen nor STAP-Cell, Single-Page-Application-Publisher.
+
+
+Globals:
+  Function:
+    Timeout: 3
+  Api:
+    EndpointConfiguration: REGIONAL
+    BinaryMediaTypes:
+      - "image~1*"
+
+Resources:
+
+  ServerlessSpaHostingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: dist/
+      FunctionName: spap-function
+      Handler: spap.lambdaHandler
+      Runtime: nodejs14.x
+      Layers:
+        - arn:aws:lambda:ap-northeast-1:861069998403:layer:layer:1
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - AmazonS3ReadOnlyAccess
+      Architectures:
+        - x86_64
+      
+      Environment:
+        Variables: 
+          # SPAP_CONTENTS_LOCATION : ARN or S3Url for SPA built package stored.
+          SPAP_CONTENTS_LOCATION: s3://spa-hosting-contents-861069998403 #arn:aws:s3:::spa-hosting-contents-861069998403
+          
+          # SPAP_REWRITE404 : Alternative content when 404 not found.
+          #SPAP_REWRITE404: index.html
+      
+      Events:
+        SpaHosting:
+          Type: Api
+          Properties:
+            Path: /spa/{proxy+}
+            Method: get
